@@ -17,12 +17,12 @@
 </template>
 
 <script>
-import SideBar from '../components/SideBar.vue';
-import Navbar from '../components/Navbar.vue';
+import SideBar from "../components/SideBar.vue";
+import Navbar from "../components/Navbar.vue";
 import { ref } from "vue";
-import Home from '../components/Dashboard/Home.vue';
-import Setting from '../components/Dashboard/Setting.vue';
-import User from '../components/Dashboard/User.vue';
+import Home from "../components/Dashboard/Home.vue";
+import Setting from "../components/Dashboard/Setting.vue";
+import User from "../components/Dashboard/User.vue";
 
 export default {
   components: {
@@ -30,10 +30,10 @@ export default {
     Navbar,
     Home,
     Setting,
-    User
+    User,
   },
   setup() {
-    const isSidebarOpen = ref(false); // State untuk toggle sidebar
+    const isSidebarOpen = ref(false);
 
     const toggleSidebar = () => {
       isSidebarOpen.value = !isSidebarOpen.value;
