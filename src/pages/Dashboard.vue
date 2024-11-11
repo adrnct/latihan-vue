@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen">
+  <div class="flex min-h-screen">
     <!-- Sidebar -->
     <SideBar :isSidebarOpen="isSidebarOpen" :toggleSidebar="toggleSidebar" />
 
@@ -18,7 +18,7 @@
 
 <script>
 import SideBar from "../components/SideBar.vue";
-import Navbar from "../components/Navbar.vue";
+import Navbar from "../components/NavBar.vue";
 import { ref } from "vue";
 import Home from "../components/Dashboard/Home.vue";
 import Setting from "../components/Dashboard/Setting.vue";
@@ -44,6 +44,10 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-/* Tambahkan styling khusus jika diperlukan */
+<style>
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
 </style>

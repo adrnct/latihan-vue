@@ -1,19 +1,37 @@
 <template>
   <div>
-    <div v-if="loading">Loading...</div>
-    <AddModalButton @open="openModal" />
+    <div class="flex justify-between items-center mb-2">
+      <h1 class="text-2xl font-bold">University Table</h1>
+      <AddModalButton context="University" @open="openModal(false)" />
+    </div>
+    <div class="divider"></div>
     <Modal
       :isOpen="isModalOpen"
+      :isEdit="isEdit"
+      :currentData="currentUniversity"
+      context="University"
       @close="closeModal"
-      @universityAdded="addUniversity"
+      @submit="handleFormSubmit"
     />
-    <Table v-if="!loading && !error && data.length" :items="data" :openModal="openModal" context="University"/>
+    <Table
+      :items="universities"
+      :openModal="openModal"
+      @edit="(university) => openModal(true, university)"
+      @delete="deleteUniversity"
+      context="University"
+      :columns="['Id', 'University Name']"
+    />
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from "vue";
-import { addUniversities, getUniversities } from "../../services/action-service";
+import {
+  getUniversities,
+  addUniversity,
+  updateUniversity,
+  deleteUniversity as deleteUniversityAPI,
+} from "../../services/action-service.js";
 import Modal from "../Modal/Modal.vue";
 import AddModalButton from "../Modal/AddModalButton.vue";
 import Table from "../Table.vue";
@@ -25,18 +43,18 @@ export default {
     AddModalButton,
   },
   setup() {
-    const data = ref([]);
-    const loading = ref(true);
-    const error = ref(null);
+    const universities = ref([]);
     const isModalOpen = ref(false);
+    const isEdit = ref(false);
+    const currentUniversity = ref(null);
 
     const fetchUniversities = async () => {
-      const universities = await getUniversities();
-      data.value = universities;
-      loading.value = false;
+      universities.value = await getUniversities();
     };
 
-    const openModal = () => {
+    const openModal = (editMode, university = null) => {
+      isEdit.value = editMode;
+      currentUniversity.value = university;
       isModalOpen.value = true;
     };
 
@@ -44,28 +62,32 @@ export default {
       isModalOpen.value = false;
     };
 
-    const addUniversity = (university) => {
-      const addData = async () => {
-        const univ = await addUniversities(university)
-        data.value.push(univ.data);
+    const handleFormSubmit = async (universityData) => {
+      if (isEdit.value) {
+        await updateUniversity(currentUniversity.value.id, universityData);
+      } else {
+        await addUniversity(universityData);
       }
-
-      addData();
+      await fetchUniversities();
     };
 
+    const deleteUniversity = async (id) => {
+      await deleteUniversityAPI(id);
+      await fetchUniversities();
+    };
     onMounted(() => {
       fetchUniversities();
     });
 
     return {
-      data,
-      loading,
-      error,
+      universities,
       isModalOpen,
+      isEdit,
+      currentUniversity,
       openModal,
       closeModal,
-      addUniversity,
-      context
+      handleFormSubmit,
+      deleteUniversity,
     };
   },
 };

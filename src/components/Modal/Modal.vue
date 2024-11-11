@@ -1,47 +1,43 @@
 <template>
-  <div
-    v-if="isOpen"
-    class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-    @click.self="closeModal"
-  >
-    <dialog class="modal max-w-full" ref="dialog" open>
-      <div class="modal-box">
-        <button
-          type="button"
-          class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-          @click="closeModal"
-        >
-          ✕
-        </button>
-        <!-- Tangkap event submit dari ModalFormUniversity -->
-        <ModalFormUniversity @submit="handleAddUniversity" />
+  <div v-if="isOpen" class="modal modal-open">
+    <div class="modal-box">
+      <h2 class="font-bold text-lg mb-4">
+        {{ isEdit ? `Edit ${context}` : `Add ${context}` }}
+      </h2>
+      <div v-if="context == 'University'">
+        <UniversityModalForm
+          :isEdit="isEdit"
+          :currentData="currentData"
+          :closeModal="closeModal"
+          @submit="submitForm"
+        />
       </div>
-    </dialog>
+      <div v-if="context == 'Account'">
+        <AccountModalForm :closeModal="closeModal" @submit="submitForm" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import ModalFormUniversity from "./ModalForm/ModalFormUniversity.vue";
+import AccountModalForm from "./ModalForm/AccountModalForm.vue";
+import UniversityModalForm from "./ModalForm/UniversityModalForm.vue";
 
 export default {
-  name: "Modal",
-  props: {
-    isOpen: {
-      type: Boolean,
-      required: true,
-    },
+  props: ["isOpen", "isEdit", "currentData", "context"],
+  emits: ["close", "submit"],
+  components: {
+    UniversityModalForm,
+    AccountModalForm,
   },
   methods: {
+    submitForm(data) {
+      this.$emit("submit", data);
+      this.closeModal();
+    },
     closeModal() {
-      this.$emit("close"); // Emit event untuk menutup modal
+      this.$emit("close");
     },
-    handleAddUniversity(university) {
-      this.closeModal(); // Tutup modal setelah menambahkan universitas
-      this.$emit("universityAdded", university); // Emit event untuk menambahkan universitas ke komponen lain
-    },
-  },
-  components: {
-    ModalFormUniversity,
   },
 };
 </script>

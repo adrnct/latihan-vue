@@ -1,15 +1,10 @@
 <template>
-  <button @click="openModal" class="btn">Open Modal</button>
+  <button class="btn btn-sm btn-primary" @click="$emit('open')">Add {{ context }}</button>
 </template>
 
 <script>
 export default {
+  props: ["context"],
   name: 'AddModalButton',
-  methods: {
-    openModal() {
-      this.$emit('open');
-    },
-  },
 };
 </script>
-
